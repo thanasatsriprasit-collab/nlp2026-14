@@ -16,5 +16,22 @@ def detect_category(text):
     return 0 
 # ทดสอบรัน
 sample = "พบการทำซ้ำวรรณกรรมโดยไม่ได้รับอนุญาต"
-print(f"Text : {sample}")
-print(f"Predicted Class : {detect_category(sample)}")
+# print(f"Text : {sample}")
+# print(f"Predicted Class : {detect_category(sample)}")
+
+# Context-aware Confidence
+def cal_confidence(text, predicted_class):
+    base_conf = 0.70
+    signals = []
+    if "มาตรา" in text or "พ.ร.บ." in text:
+        base_conf += 0.15
+        signals.append("statotury_ref")
+    if "คำพิพากษา" in text :
+        base_conf += 0.10
+        signals.append("precedent_ref")
+    return min(base_conf,0.99), signals
+# ทดสอบรัน
+text_with_context = "ละเมิดลิขสิทธิ์ตามมาตรา 27 แห่ง พ.ร.บ. ลิขสิทธิ์ "
+conf, sig = cal_confidence(text_with_context, 2)
+print(f"Confidence: {conf: 2f}")
+print(f"Signals: {sig}")
